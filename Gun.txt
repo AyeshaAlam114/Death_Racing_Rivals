@@ -1,0 +1,158 @@
+
+using System;
+
+using UnityEngine;
+using UnityEngine.UI;
+
+
+public class Gun : MonoBehaviour
+{
+    public float damage = 10f;
+    public float range = 100f;
+    //  public Image image;
+    public GameObject bulletprefeb;
+    public GameObject Car;
+    RaycastHit hit;
+    public GameObject cube;
+    public GameObject muzzleflash;
+    bool a;
+    public bool firefromenemy;
+    public bool firefromplayer;
+    public bool firefromtankhitplayer;
+    public bool firefromtankhitenemy;
+     GameObject effectedenemytank;
+    GameObject effectedenemyfromplayer;
+    public string enemynamebytank;
+    public string enemynamebyplayer;
+    public bool playertotank;
+    public bool playertoenemy;
+    void Start()
+    {
+        a = true;
+    }
+    // Update is called once per frame
+    void Update()
+    {
+        
+            if (Car.tag == "Player")
+            {
+                if (Input.GetKey("0"))
+                {
+                    //PlayerShoot();
+
+                    if (Physics.Raycast(Car.transform.position, Car.transform.forward, out hit, range))
+                    {
+                        Debug.Log(hit.transform.name);
+                        Debug.Log("ray initiate from player but don't reached at enemy");
+
+                        if (hit.transform.tag == "Enemy")
+                        {
+
+                            Debug.Log("ray reached enemy and now instantiate bullet");
+                            Vector3 bulletposition = cube.transform.position;
+                            firefromplayer = true;
+                            playertoenemy = true;
+                            effectedenemyfromplayer = hit.transform.gameObject;
+                            enemynamebyplayer = effectedenemyfromplayer.name;
+                            Instantiate(bulletprefeb, bulletposition, Quaternion.identity);
+                            Instantiate(muzzleflash, bulletposition, Quaternion.identity);
+
+                        }
+                        if (hit.transform.tag == "tank")
+                        {
+
+                            Debug.Log("ray reached tank and now instantiate bullet");
+                            Vector3 bulletposition = cube.transform.position;
+                            firefromplayer = true;
+                            playertotank = true;
+                           // effectedenemyfromplayer = hit.transform.gameObject;
+                            //enemynamebyplayer = effectedenemyfromplayer.name;
+                            Instantiate(bulletprefeb, bulletposition, Quaternion.identity);
+                            Instantiate(muzzleflash, bulletposition, Quaternion.identity);
+
+                        }
+
+
+                    Enemy enemy = hit.transform.GetComponent<Enemy>();
+                        if (enemy != null)
+                        {
+                            enemy.TakeDamage(damage);
+                            Debug.Log(damage);
+                        }
+                        Debug.Log("Hit by player");
+                       
+                    }
+                }
+
+            }
+            if (Car.tag == "Enemy")
+            {
+                if (a==true)
+                {
+                      //EnemyShoot();
+                    Ray shootingRay = new Ray(Car.transform.position, Car.transform.forward);
+                    Debug.DrawRay(Car.transform.position, Car.transform.forward * range);
+                    if (Physics.Raycast(shootingRay, out hit, range))
+                    {
+                       Debug.Log("ray initiate from enemy but don't reached at player");
+                       if (hit.transform.tag == "Player")
+                       {
+                            Debug.Log("ray reached player and now instantiate bullet");
+                            firefromenemy = true;
+                            Vector3 bulletposition = cube.transform.position;
+                            Instantiate(bulletprefeb, bulletposition, Quaternion.identity);
+                            Instantiate(muzzleflash, bulletposition, Quaternion.identity);
+
+                       }
+                    }
+                    Debug.Log("Hit by enemy");
+                    a = false;
+                }
+                Invoke("FireDelay", 5f);
+            }
+            if (Car.tag == "tank")
+            {
+                if (a == true)
+                {
+                    //TankShoot();
+                    Ray shootingRay = new Ray(Car.transform.position, Car.transform.forward);
+                    Debug.DrawRay(Car.transform.position, Car.transform.forward * range);
+                    if (Physics.Raycast(shootingRay, out hit, range))
+                    {
+                        Debug.Log("ray initiate from tank but don't reached at any car");
+                        if (hit.transform.tag == "Player")
+                        {
+                            Debug.Log("ray reached player and now instantiate bullet");
+                           
+                            Vector3 bulletposition = cube.transform.position;
+                            firefromtankhitplayer = true;
+                            Instantiate(bulletprefeb, bulletposition, Quaternion.identity);
+                            Instantiate(muzzleflash, bulletposition, Quaternion.identity);
+
+                        }
+                        if (hit.transform.tag == "Enemy")
+                        {
+                            Debug.Log("ray reached enemy and now instantiate bullet");
+                            
+                            Vector3 bulletposition = cube.transform.position;
+                            firefromtankhitenemy = true;
+                            effectedenemytank = hit.transform.gameObject;
+                            enemynamebytank = effectedenemytank.name;
+                            Instantiate(bulletprefeb, bulletposition, Quaternion.identity);
+                            Instantiate(muzzleflash, bulletposition, Quaternion.identity);
+
+                        }
+                    }
+                    Debug.Log("Hit by enemy");
+                    a = false;
+                }
+                Invoke("FireDelay", 5f);
+
+            }
+    }
+
+    void FireDelay()
+    {
+        a = true;
+    }
+}

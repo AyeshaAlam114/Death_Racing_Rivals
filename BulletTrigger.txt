@@ -1,0 +1,52 @@
+
+using UnityEngine;
+using UnityEngine.UI;
+
+public class BulletTrigger : MonoBehaviour
+{
+    GameObject imagelifeline;
+    float valueL;
+    void OnCollisionEnter(Collision target)
+    {
+        imagelifeline = GameObject.FindGameObjectWithTag("lifelineimage");
+
+        if (target.gameObject.tag == "bullet")
+        {
+            if (this.gameObject.tag == "Player")
+            {
+                //Debug.Log("player damaged by bullet");
+                Destroy(target.gameObject);
+                imagelifeline.GetComponent<Image>().fillAmount -= 0.1f;
+                Debug.Log("player damaged by bullet//BulletTrigger");
+            }
+            if (this.gameObject.tag == "Enemy")
+            {
+                //Debug.Log("player damaged by bullet");
+                Destroy(target.gameObject);
+                //imagelifeline.GetComponent<Image>().fillAmount -= 0.1f;
+                Debug.Log("enemy damaged by bullet//BulletTrigger");
+            }
+            if (this.gameObject.tag == "tank")
+            {
+                //Debug.Log("player damaged by bullet");
+                Destroy(target.gameObject);
+                //imagelifeline.GetComponent<Image>().fillAmount -= 0.1f;
+                Debug.Log("tank damaged by bullet//BulletTrigger");
+            }
+
+        }
+
+    }
+    void Update()
+    {
+        if (imagelifeline.GetComponent<Image>().fillAmount <= 0)
+        {
+            ///gameover pannel true;
+        }
+        valueL = imagelifeline.GetComponent<Image>().fillAmount;
+        int lifeline = (int)valueL*10;
+        //store playerpref
+        PlayerPrefs.SetInt("Lifeline", lifeline);
+    }
+}
+
